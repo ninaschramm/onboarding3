@@ -56,6 +56,23 @@ async function ticketProcessPayment(ticketId: number) {
   });
 }
 
+async function listTicketTypesWithHotels() {
+  const ticketType = await prisma.ticketType.findFirst({
+    where: {
+      isRemote: false,
+      includesHotel: true
+    },
+    include: {
+      Ticket: {
+        where: {
+          status: TicketStatus.PAID
+        }
+      }
+    }
+  });
+  return (ticketType);
+}
+
 export type CreateTicketParams = Omit<Ticket, "id" | "createdAt" | "updatedAt">
 
 const ticketRepository = {
@@ -65,6 +82,7 @@ const ticketRepository = {
   findTickeyById,
   findTickeWithTypeById,
   ticketProcessPayment,
+  listTicketTypesWithHotels
 };
 
 export default ticketRepository;
